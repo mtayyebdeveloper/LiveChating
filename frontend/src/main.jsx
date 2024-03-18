@@ -4,10 +4,12 @@ import App from "./App.jsx";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { StoreProvider } from "./store/Auth.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
-    <ToastContainer
+   <StoreProvider>
+   <ToastContainer
       position="top-right"
       autoClose={3000}
       hideProgressBar={false}
@@ -21,5 +23,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       transition:Bounce
     />
     <App />
+   </StoreProvider>
   </>
 );

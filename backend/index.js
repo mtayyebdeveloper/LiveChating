@@ -1,14 +1,16 @@
 import express, { json } from "express";
 import "dotenv/config";
-import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import AuthRouter from "./src/routers/Auth.router.js";
 import DBConnection from "./src/database/DB_Connection.js";
+import {errorThrowingMiddleware} from './src/middlewares/ErrorThrowing.middleware.js'
 
 const app = express();
 
 const server = createServer(app);
+
+app.use(json());
 
 const io = new Server(server, {
   cors: {
@@ -21,7 +23,6 @@ const io = new Server(server, {
 });
 
 DBConnection();
-app.use(json());
 
 app.use("/api/auth", AuthRouter);
 io.on("connection", (socket) => {
@@ -29,9 +30,11 @@ io.on("connection", (socket) => {
 
   socket.on("massage", (m) => {
     console.log(m);
-    io.to().emit("data",m)
+    io.emit("data", m);
   });
 });
+
+app.use(errorThrowingMiddleware)
 
 server.listen(process.env.PORT, () => {
   console.log("Server is running on port ", process.env.PORT);

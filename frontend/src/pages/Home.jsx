@@ -1,29 +1,22 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
+let user;
+ 
 const Home = () => {
-  const [roomID, setroomID] = useState("");
   const [username, setusername] = useState("");
   const navigate = useNavigate();
 
-  const genarateNewID = () => {
-    setroomID(uuidv4());
-  };
-
   const submitFormData = () => {
-    if (!roomID || !username) {
-      toast.error("Please fill all the fields");
+    if (!username) {
+      toast.error("Please enter your name.");
     } else {
-      if(roomID.length >=36){
-        navigate(`/editor/${roomID}`, {
-          state: {
-            username: username,
-          },
-        });
-      }else{
-        toast.error("Invalid Room ID");
+      if (username.length >= 3) {
+        user=username
+        navigate(`/chating`);
+      } else {
+        toast.error("user name must be grater then 3 characters.");
       }
     }
   };
@@ -38,11 +31,11 @@ const Home = () => {
               alt="site logo"
               className="w-[60px]"
             />
-            <h1 className="text-3xl font-bold">Live' Editor</h1>
+            <h1 className="text-3xl font-bold">Live' Chats</h1>
           </div>
-          <div className="ms-5 mt-5 flex flex-col">
-            <div className="flex flex-col">
-              <label htmlFor="roomid" className="text-lg py-1 font-bold">
+          <div className="mt-[50px] flex flex-col items-center justify-center">
+            {/* <div className="flex flex-col"> */}
+            {/* <label htmlFor="roomid" className="text-lg py-1 font-bold">
                 Enter ROOM ID
               </label>
               <input
@@ -52,11 +45,11 @@ const Home = () => {
                 value={roomID}
                 onChange={(e) => setroomID(e.target.value)}
                 className="w-[50vw] text-lg outline-none px-2 py-1 text-black font-semibold rounded"
-              />
-            </div>
+              /> */}
+            {/* </div> */}
             <div className="flex flex-col mt-2">
               <label htmlFor="username" className="text-lg py-1 font-bold">
-                Enter Username
+                Enter Your Name
               </label>
               <input
                 type="text"
@@ -64,26 +57,18 @@ const Home = () => {
                 onChange={(e) => setusername(e.target.value)}
                 id="username"
                 placeholder="Enter username"
-                className="w-[50vw] text-lg outline-none px-2 py-1 text-black font-semibold rounded"
+                className="w-[50vw] text-xl outline-none px-2 py-2 text-black font-semibold rounded"
               />
             </div>
+
             <div>
               <button
-                className="py-1 px-2 text-center font-semibold text-lg bg-green-500 text-white rounded-full border-2 border-green-600 w-[150px] float-right me-[90px] mt-5 cursor-pointer hover:bg-green-700"
+                className="py-2 px-2 text-center font-semibold text-xl bg-green-500 text-white  border-2 border-green-600 float-right rounded mt-5 cursor-pointer hover:bg-green-700 w-[50vw]"
                 onClick={submitFormData}
               >
-                Submit
+                Login
               </button>
             </div>
-          </div>
-          <div className="flex items-center justify-center mt-16 font-semibold text-lg">
-            <p>If you don't have room so:</p>
-            <p
-              className="ms-1 text-blue-500 underline hover:text-blue-700 cursor-pointer"
-              onClick={genarateNewID}
-            >
-              Genarate New Room ID
-            </p>
           </div>
         </div>
       </div>
@@ -91,4 +76,5 @@ const Home = () => {
   );
 };
 
+export {user}
 export default Home;
