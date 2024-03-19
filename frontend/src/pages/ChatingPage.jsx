@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useAuth } from "../store/Auth";
 import { io } from "socket.io-client";
-import { user } from "./Home";
-import ErrorPage from "./ErrorPage";
+import {useNavigate} from 'react-router-dom'
+import UserData from '../components/UserData'
 
-const EditorPage = () => {
+const ChatingPage = () => {
   const socket = useMemo(() => io("http://localhost:4000"), []);
   const [massage, setmassage] = useState("");
   const [data, setdata] = useState([]);
+  const {token,userData,UserAuthentication} =useAuth()
+  const navigate = useNavigate()
+  const [popup, setpopup] = useState("hidden")
 
   useEffect(() => {
+    UserAuthentication()
     socket.on("data", (d) => {
       setdata((data) => [...data, d]);
     });
@@ -19,9 +23,16 @@ const EditorPage = () => {
     socket.emit("massage", massage);
     setmassage("");
   };
+  const aboutUserBtn =()=>{
+    if(popup=="hidden"){
+      setpopup("flex")
+    }else{
+      setpopup("hidden")
+    }
+  }
   return (
     <>
-      {user ? (
+      {token ? (
         <>
           <div>
             <div className="w-full bg-gray-800 h-screen">
@@ -35,8 +46,13 @@ const EditorPage = () => {
                         <div>
                           <img
                             className="w-10 h-10 rounded-full"
-                            src="https://cdn.pixabay.com/photo/2023/08/05/14/24/twilight-8171206_1280.jpg"
+                            src={userData.userImage}
+                            alt={userData.name}
+                            onClick={aboutUserBtn}
                           />
+                        </div>
+                        <div className={`${popup}`}>
+                          <UserData/>
                         </div>
 
                         <div className="flex">
@@ -509,13 +525,9 @@ const EditorPage = () => {
             </div>
           </div>
         </>
-      ) : (
-        <>
-          <ErrorPage />
-        </>
-      )}
+      ) : useEffect(()=>{navigate("/")},[])}
     </>
   );
 };
 
-export default EditorPage;
+export default ChatingPage;

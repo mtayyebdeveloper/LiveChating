@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema(
     userImage: {
       type: String,
       required: true,
+      unique: false,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
     isAdmin: {
       type: Boolean,
@@ -46,21 +52,13 @@ userSchema.pre("save", async function bcryptPassword(next) {
   }
 });
 
-// compare passwords.....................
-userSchema.methods.comparePassword = async function (password, next) {
-  try {
-    return await bcrypt.compare(password, this.password);
-  } catch (error) {
-    next(error);
-  }
-};
-
 userSchema.methods.genarateToken = async function (next) {
   try {
-    jwt.sign(
+    return jwt.sign(
       {
         userID: this._id.toString(),
         phone: this.phone,
+        email: this.email,
         isAdmin: this.isAdmin,
       },
       process.env.JWT_SECRET_KEY,

@@ -30,6 +30,6 @@ AuthRouter.route("/signup").post(
   SignupController
 );
 
-AuthRouter.route("/user").post(verifiedUserMiddleware, UserDataController);
+AuthRouter.route("/user").get(verifiedUserMiddleware, UserDataController);
 
 export default AuthRouter;

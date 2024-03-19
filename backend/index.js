@@ -2,9 +2,10 @@ import express, { json } from "express";
 import "dotenv/config";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import cors from "cors";
 import AuthRouter from "./src/routers/Auth.router.js";
 import DBConnection from "./src/database/DB_Connection.js";
-import {errorThrowingMiddleware} from './src/middlewares/ErrorThrowing.middleware.js'
+import { errorThrowingMiddleware } from "./src/middlewares/ErrorThrowing.middleware.js";
 
 const app = express();
 
@@ -21,8 +22,17 @@ const io = new Server(server, {
     preflightContinue: false,
   },
 });
+const options = {
+  origin: "http://localhost:5173",
+  optionsSuccessStatus: 200,
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+};
+app.use(cors(options));
 
 DBConnection();
+app.use(errorThrowingMiddleware);
 
 app.use("/api/auth", AuthRouter);
 io.on("connection", (socket) => {
@@ -33,8 +43,6 @@ io.on("connection", (socket) => {
     io.emit("data", m);
   });
 });
-
-app.use(errorThrowingMiddleware)
 
 server.listen(process.env.PORT, () => {
   console.log("Server is running on port ", process.env.PORT);
